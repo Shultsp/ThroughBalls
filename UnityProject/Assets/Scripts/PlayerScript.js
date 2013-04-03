@@ -1,14 +1,14 @@
 #pragma strict
 
-var corridor: float = 5.0;
+var corridor: float = 5.0; //width of the corridor
 var acceleration: float = 0.1;
-var additiveVelocityValue: float = 0.2;
-var trackSections: GameObject[];
-var track = new Array();
-private var sectionToDelete: GameObject;
-private var trackSectionsAccomplished: int = 0;
-private var trackSectionLength: int = 50;
-private var additiveVelocity: float = 0.0;
+var additiveVelocityValue: float = 0.2; //percent of current speed to throttle or brake
+var trackSections: GameObject[]; //array from what to build track
+var multiplayerGame: boolean = false; //single- or multiplayer game
+private var track = new Array(); //arrey of builded track
+private var trackSectionsAccomplished: int = 0; //sections of track behind
+private var trackSectionLength: int = 50; //length of one section
+private var additiveVelocity: float = 1.0; //speed to throttle or brake
 private var velocity: float;
 private var score: float = 0;
 
@@ -39,18 +39,17 @@ function Update () {
 	score += Mathf.Round (5 * velocity);
 //	print ('Score: ' + score);
 
-	//building track
+	//building track in front
 	if (trackSectionsAccomplished * trackSectionLength < transform.position.z + trackSectionLength) {
 	//	print (Mathf.Floor (Random.Range (0, trackSections.Length)));
 		track[trackSectionsAccomplished] = (Instantiate (trackSections[Mathf.Floor (Random.Range (0, trackSections.Length))],
 														Vector3(0, 0, trackSectionsAccomplished * (1 + trackSectionLength) + trackSectionLength),
 														Quaternion.Euler(Vector3(270, 0, 0))));
-		print(track[trackSectionsAccomplished]);
-	//	track.Length++;
 		trackSectionsAccomplished++;
 	}
-	if ((trackSectionsAccomplished - 1) * trackSectionLength < transform.position.z && trackSectionsAccomplished >= 2) {
-		GameObject.Destroy (track[trackSectionsAccomplished - 2]);
+	//destroy track behind
+	if ((trackSectionsAccomplished - 2) * 1.1 * trackSectionLength < transform.position.z && trackSectionsAccomplished >= 3) {
+		GameObject.Destroy (track[trackSectionsAccomplished - 3]);
 	}
 }
 
